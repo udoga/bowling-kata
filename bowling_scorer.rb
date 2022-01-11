@@ -16,14 +16,14 @@ class BowlingScorer
   end
 
   def score_frame(frame)
-    return 0 if frame == 'X'
+    return 10 if frame == 'X'
     raise 'Invalid frame: ' + frame if frame.size != 2
-    return score_hit(frame[0]) + score_hit(frame[1])
+    first_hit = score_hit(frame[0])
+    return frame[1] == '/'? 10 : (first_hit + score_hit(frame[1]))
   end
 
   def score_hit(hit)
-    return 0 if hit == '-'
-    raise 'Invalid hit: ' + hit if hit.to_i.to_s != hit
+    raise 'Invalid hit: ' + hit if hit != '-' and hit.to_i.to_s != hit
     return hit.to_i
   end
 end

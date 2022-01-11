@@ -31,6 +31,8 @@ class BowlingScorerTest < Test::Unit::TestCase
     assert_error('|--|--|--|--|--|--|--|--|--||', 'Invalid frame: ')
     assert_error('--||--|--|--|--|--|--|--|--||', 'Invalid frame: ')
     assert_error('--|--|---|--|--|--|--|--|--|--||', 'Invalid frame: ---')
+    assert_error("/|--|--|--|--|--|--|--|--|--||", 'Invalid frame: /')
+    assert_error("--|1|--|--|--|--|--|--|--|--||", 'Invalid frame: 1')
   end
 
   def test_raises_error_when_frame_hits_are_invalid
@@ -44,5 +46,20 @@ class BowlingScorerTest < Test::Unit::TestCase
     assert_score('-1|-1|-1|-1|-1|-1|-1|-1|-1|-1||', 10)
     assert_score('-2|-2|-2|-2|-2|-2|-2|-2|-2|-2||', 20)
     assert_score('3-|3-|3-|3-|3-|3-|3-|3-|3-|3-||', 30)
+  end
+
+  def test_scores_frame_as_ten_when_it_is_strike
+    assert_score("X|--|--|--|--|--|--|--|--|--||", 10)
+    assert_score("X|--|--|--|--|X|--|--|--|--||", 20)
+  end
+
+  def test_scores_frame_as_ten_when_it_is_spare
+    assert_score("-/|--|--|--|--|--|--|--|--|--||", 10)
+    assert_score("1/|--|--|--|--|--|--|--|--|--||", 10)
+  end
+
+  def test_raises_error_when_hit_before_spare_is_unavailable
+    assert_error("/-|--|--|--|--|--|--|--|--|--||", 'Invalid hit: /')
+    assert_error("a/|--|--|--|--|--|--|--|--|--||", 'Invalid hit: a')
   end
 end
