@@ -39,6 +39,7 @@ class BowlingScorerTest < Test::Unit::TestCase
     assert_error('-a|--|--|--|--|--|--|--|--|--||', 'Invalid hit: a')
     assert_error('--|-b|--|--|--|--|--|--|--|--||', 'Invalid hit: b')
     assert_error('--|--|c-|--|--|--|--|--|--|--||', 'Invalid hit: c')
+    assert_error('a/|--|c-|--|--|--|--|--|--|--||', 'Invalid hit: a')
   end
 
   def test_calculates_sum_when_all_frames_are_the_same
@@ -58,8 +59,15 @@ class BowlingScorerTest < Test::Unit::TestCase
     assert_score("1/|--|--|--|--|--|--|--|--|--||", 10)
   end
 
-  def test_raises_error_when_hit_before_spare_is_unavailable
+  def test_raises_error_when_frame_starts_with_spare
     assert_error("/-|--|--|--|--|--|--|--|--|--||", 'Invalid hit: /')
-    assert_error("a/|--|--|--|--|--|--|--|--|--||", 'Invalid hit: a')
+    assert_error("-/|/-|--|--|--|--|--|--|--|--||", 'Invalid hit: /')
+  end
+
+  def test_adds_next_hit_to_frame_score_when_it_is_spare
+    assert_score("-/|1-|--|--|--|--|--|--|--|--||", 12)
+    assert_score("-/|11|--|--|--|--|--|--|--|--||", 13)
+    assert_score("-/|-/|--|--|--|--|--|--|--|--||", 20)
+    assert_score("-/|X|--|--|--|--|--|--|--|--||", 30)
   end
 end
