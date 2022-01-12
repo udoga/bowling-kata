@@ -46,7 +46,7 @@ class BowlingScorerTest < Test::Unit::TestCase
     assert_score('--|--|--|--|--|--|--|--|--|--||', 0)
     assert_score('-1|-1|-1|-1|-1|-1|-1|-1|-1|-1||', 10)
     assert_score('-2|-2|-2|-2|-2|-2|-2|-2|-2|-2||', 20)
-    assert_score('3-|3-|3-|3-|3-|3-|3-|3-|3-|3-||', 30)
+    assert_score('9-|9-|9-|9-|9-|9-|9-|9-|9-|9-||', 90)
   end
 
   def test_scores_frame_as_ten_when_it_is_strike
@@ -69,5 +69,21 @@ class BowlingScorerTest < Test::Unit::TestCase
     assert_score("-/|11|--|--|--|--|--|--|--|--||", 13)
     assert_score("-/|-/|--|--|--|--|--|--|--|--||", 20)
     assert_score("-/|X|--|--|--|--|--|--|--|--||", 30)
+    assert_score("5/|5/|5/|5/|5/|5/|5/|5/|5/|5/||5", 150)
+  end
+
+  def test_adds_next_two_hits_to_frame_score_when_it_is_strike
+    assert_score("X|11|--|--|--|--|--|--|--|--||", 14)
+    assert_score("X|11|11|--|--|--|--|--|--|--||", 16)
+    assert_score("X|X|X|X|X|X|X|X|X|X||XX", 300)
+    assert_score("X|1/|--|--|--|--|--|--|--|--||", 30)
+    assert_score("X|7/|9-|X|-8|8/|-6|X|X|X||81", 167)
+  end
+
+  def test_raises_error_when_hits_are_missing_after_spare_or_strike
+    assert_error("--|--|--|--|--|--|--|--|--|-/||", 'Missing hits')
+    assert_error("--|--|--|--|--|--|--|--|--|X||", 'Missing hits')
+    assert_error("--|--|--|--|--|--|--|--|--|X||-", 'Missing hits')
+    assert_error("X|||||||||||", 'Missing hits')
   end
 end

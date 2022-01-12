@@ -4,16 +4,27 @@ class BowlingScorer
     return score_frames(game.split('|', -1))
   end
 
+  private
+
   def score_frames(frames)
     raise 'Invalid game' if frames.size() != 12 or not frames[10].empty?
-    (0..9).map {|i| score_frame(frames[i], frames[i+1])}.sum()
+    (0..9).map {|i| score_frame(frames[i], frames[i+1..-1].join)}.sum()
   end
 
   def score_frame(frame, rest)
-    return score_hit(frame) if frame == 'X'
-    raise 'Invalid frame: ' + frame if frame.size != 2
-    return 10 + score_hit(rest[0]) if score_hit(frame[0]) and frame[1] == '/'
-    return score_hit(frame[0]) + score_hit(frame[1])
+    raise 'Invalid frame: ' + frame if frame != 'X' and frame.size != 2
+    score = score_hits(frame, frame.size)
+    score += score_hits(rest, 2) if frame[-1] == 'X'
+    score += score_hits(rest, 1) if frame[-1] == '/'
+    return score
+  end
+
+  def score_hits(hits, size)
+    raise 'Missing hits' if hits.size < size
+    score = score_hit(hits[0])
+    return score if size == 1
+    return 10 if hits[1] == '/'
+    return score + score_hit(hits[1])
   end
 
   def score_hit(hit)
